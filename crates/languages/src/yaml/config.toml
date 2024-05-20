@@ -1,0 +1,13 @@
+name = "YAML"
+grammar = "yaml"
+path_suffixes = ["yml", "yaml"]
+line_comments = ["# "]
+autoclose_before = ",]}"
+brackets = [
+    { start = "{", end = "}", close = true, newline = true },
+    { start = "[", end = "]", close = true, newline = true },
+    { start = "\"", end = "\"", close = true, newline = false, not_in = ["string"] },
+]
+
+increase_indent_pattern = ":\\s*[|>]?\\s*$"
+tab_size = 2

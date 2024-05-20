@@ -1,0 +1,43 @@
+[package]
+name = "util"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "Apache-2.0"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/util.rs"
+doctest = true
+
+[features]
+test-support = ["tempfile", "git2"]
+
+[dependencies]
+anyhow.workspace = true
+collections.workspace = true
+dirs = "3.0"
+futures.workspace = true
+git2 = { workspace = true, optional = true }
+globset.workspace = true
+lazy_static.workspace = true
+log.workspace = true
+rand.workspace = true
+regex.workspace = true
+rust-embed.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+async-fs.workspace = true
+futures-lite.workspace = true
+take-until = "0.2.0"
+tempfile = { workspace = true, optional = true }
+unicase.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+tendril = "0.4.3"
+
+[dev-dependencies]
+git2.workspace = true
+tempfile.workspace = true

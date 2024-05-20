@@ -1,0 +1,38 @@
+[files]
+ignore-files = true
+ignore-hidden = false
+extend-exclude = [
+    ".git/",
+    # File suffixes aren't typos
+    "assets/icons/file_icons/file_types.json",
+    "crates/extensions_ui/src/extension_suggest.rs",
+    # Not our typos
+    "crates/live_kit_server/",
+    # Vim makes heavy use of partial typing tables
+    "crates/vim/",
+    # Editor and file finder rely on partial typing and custom in-string syntax
+    "crates/file_finder/src/file_finder_tests.rs",
+    "crates/editor/src/editor_tests.rs",
+    # Clojure uses .edn filename extension, which is not a misspelling of "end"
+    "extensions/clojure/languages/clojure/config.toml",
+    # glsl isn't recognized by this tool
+    "extensions/glsl/languages/glsl/",
+    # Windows likes its abbreviations
+    "crates/gpui/src/platform/windows/",
+    # Some typos in the base mdBook CSS.
+    "docs/theme/css/"
+]
+
+[default]
+extend-ignore-re = [
+    'cl\[ist]',
+    '"ba"',
+    ":ba\\|z",
+    # :/ crates/collab/migrations/20231009181554_add_release_channel_to_rooms.sql
+    "COLUMN enviroment",
+    # Typo in ClickHouse column name.
+    # crates/collab/src/api/events.rs
+    "rename = \"sesssion_id\"",
+    "doas",
+]
+check-filename = true

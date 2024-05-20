@@ -1,0 +1,20 @@
+[package]
+name = "sqlez_macros"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/sqlez_macros.rs"
+proc-macro = true
+doctest = false
+
+[dependencies]
+lazy_static.workspace = true
+sqlez.workspace = true
+sqlformat = "0.2"
+syn = "1.0"

@@ -1,0 +1,17 @@
+[package]
+name = "fuzzy"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/fuzzy.rs"
+doctest = false
+
+[dependencies]
+gpui.workspace = true
+util.workspace = true

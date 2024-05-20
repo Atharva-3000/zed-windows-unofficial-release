@@ -1,0 +1,26 @@
+[package]
+name = "theme_importer"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+clap = { workspace = true, features = ["derive"] }
+gpui.workspace = true
+indexmap = { version = "1.6.2", features = ["serde"] }
+log.workspace = true
+palette.workspace = true
+rust-embed.workspace = true
+schemars = { workspace = true, features = ["indexmap"] }
+serde.workspace = true
+serde_json.workspace = true
+serde_json_lenient.workspace = true
+simplelog = "0.9"
+strum = { version = "0.25.0", features = ["derive"] }
+theme.workspace = true
+vscode_theme = "0.2.0"

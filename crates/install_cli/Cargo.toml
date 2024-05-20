@@ -1,0 +1,21 @@
+[package]
+name = "install_cli"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/install_cli.rs"
+
+[features]
+test-support = []
+
+[dependencies]
+anyhow.workspace = true
+gpui.workspace = true
+smol.workspace = true
+util.workspace = true

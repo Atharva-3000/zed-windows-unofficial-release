@@ -1,0 +1,27 @@
+{
+  "languages": {
+    "Markdown": {
+      "tab_size": 2,
+      "formatter": "prettier"
+    },
+    "TOML": {
+      "formatter": "prettier",
+      "format_on_save": "off"
+    },
+    "YAML": {
+      "tab_size": 2,
+      "formatter": "prettier"
+    },
+    "JSON": {
+      "tab_size": 2,
+      "formatter": "prettier"
+    },
+    "JavaScript": {
+      "tab_size": 2,
+      "formatter": "prettier"
+    }
+  },
+  "formatter": "auto",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true
+}

@@ -1,0 +1,14 @@
+[package]
+name = "story"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[dependencies]
+gpui.workspace = true
+itertools = { package = "itertools", version = "0.10" }
+smallvec.workspace = true

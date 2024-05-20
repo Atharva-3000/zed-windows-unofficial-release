@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+
+# Function for displaying help info
+help_info() {
+  echo "
+Usage: ${0##*/} [options]
+Build a release .tar.gz for Linux.
+
+Options:
+  -h    Display this help and exit.
+  "
+}
+
+while getopts 'h' flag
+do
+    case "${flag}" in
+        h)
+           help_info
+           exit 0
+           ;;
+    esac
+done
+
+export ZED_BUNDLE=true
+
+channel=$(<crates/zed/RELEASE_CHANNEL)
+
+version="$(script/get-crate-version zed)"
+# Set RELEASE_VERSION so it's compiled into GPUI and it knows about the version.
+export RELEASE_VERSION="${version}"
+
+commit=$(git rev-parse HEAD | cut -c 1-7)
+
+version_info=$(rustc --version --verbose)
+host_line=$(echo "$version_info" | grep host)
+target_triple=${host_line#*: }
+
+# Build binary in release mode
+export RUSTFLAGS="-C link-args=-Wl,--disable-new-dtags,-rpath,\$ORIGIN/../lib"
+cargo build --release --target "${target_triple}" --package zed --package cli
+
+# Strip the binary of all debug symbols
+# Later, we probably want to do something like this: https://github.com/GabrielMajeri/separate-symbols
+strip "target/${target_triple}/release/Zed"
+strip "target/${target_triple}/release/cli"
+
+suffix=""
+if [ "$channel" != "stable" ]; then
+  suffix="-$channel"
+fi
+
+# Move everything that should end up in the final package
+# into a temp directory.
+temp_dir=$(mktemp -d)
+zed_dir="${temp_dir}/zed$suffix.app"
+
+# Binary
+mkdir -p "${zed_dir}/bin"
+cp "target/${target_triple}/release/Zed" "${zed_dir}/bin/zed"
+cp "target/${target_triple}/release/cli" "${zed_dir}/bin/cli"
+
+# Libs
+find_libs() {
+    ldd target/${target_triple}/release/Zed |\
+    cut -d' ' -f3 |\
+    grep -v '\<\(libstdc++.so\|libc.so\|libgcc_s.so\|libm.so\|libpthread.so\|libdl.so\)'
+}
+
+mkdir -p "${zed_dir}/lib"
+rm -rf "${zed_dir}/lib/*"
+cp $(find_libs) "${zed_dir}/lib"
+
+# Icons
+mkdir -p "${zed_dir}/share/icons/hicolor/512x512/apps"
+cp "crates/zed/resources/app-icon$suffix.png" "${zed_dir}/share/icons/hicolor/512x512/apps/zed.png"
+mkdir -p "${zed_dir}/share/icons/hicolor/1024x1024/apps"
+cp "crates/zed/resources/app-icon$suffix@2x.png" "${zed_dir}/share/icons/hicolor/1024x1024/apps/zed.png"
+
+# .desktop
+mkdir -p "${zed_dir}/share/applications"
+cp "crates/zed/resources/zed.desktop" "${zed_dir}/share/applications/zed$suffix.desktop"
+if [[ "$channel" == "preview" ]]; then
+    sed -i "s|Name=Zed|Name=Zed Preview|g" "${zed_dir}/share/applications/zed$suffix.desktop"
+elif [[ "$channel" == "nightly" ]]; then
+    sed -i "s|Name=Zed|Name=Zed Nightly|g" "${zed_dir}/share/applications/zed$suffix.desktop"
+fi
+
+# Licenses
+cp "assets/licenses.md" "${zed_dir}/licenses.md"
+
+# Create archive out of everything that's in the temp directory
+target="linux-$(uname -m)"
+
+if [[ "$channel" == "nightly" ]]; then
+  archive="zed-${target}.tar.gz"
+elif  [[ "$channel" == "dev" ]]; then
+  archive="zed-${commit}-${target}.tar.gz"
+else
+  archive="zed-${target}.tar.gz"
+fi
+
+rm -rf "${archive}"
+tar -czvf target/release/$archive -C ${temp_dir} "zed$suffix.app"
